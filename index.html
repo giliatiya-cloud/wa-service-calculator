@@ -18,7 +18,6 @@
     .row { display:grid; gap:14px; margin-bottom:14px; }
     @media(min-width:560px){ .row.two { grid-template-columns:1fr 1fr; } }
     .btn { display:inline-block; background:var(--accent); color:#fff; border:0; border-radius:8px; padding:12px 18px; font-weight:700; cursor:pointer; font:inherit; }
-    .btn.secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); }
     .result { display:none; margin-top:14px; padding:14px; background:#eef8f3; border-radius:8px; border:1px solid #cfe8dc; }
     .result strong { font-size:1.35rem; }
     .note { font-size:.85rem; color:var(--muted); margin-top:10px; }
@@ -46,7 +45,7 @@
       </div>
       <button class="btn" type="button" id="calc">חשבו אומדן</button>
       <div class="result" id="result" aria-live="polite"></div>
-      <p class="note">אומדן לפי תעריף Meta לשיחות Service בישראל (~$0.0053 להודעה) + 1,000 הודעות חינם לכל מספר בחודש. אפשר גם לחשוב במונחי כמה הודעות יוצאות בשיחה ממוצעת. התעריפים עשויים להשתנות — בדקו ב-Meta. לא רלוונטי לאפליקציית Business החינמית.</p>
+      <p class="note">אומדן לפי תעריף Meta לשיחות Service בישראל (~$0.0053 להודעה) + 1,000 הודעות חינם לכל מספר בחודש. התעריפים עשויים להשתנות — בדקו ב-Meta.</p>
     </div>
 
     <div class="card">
@@ -82,27 +81,26 @@
           </select>
         </div>
         <div id="refuse-wrap" style="display:none">
-          <label for="refuse">אם לא / אולי — למה? (עוזר לנו ללמוד)</label>
-          <textarea id="refuse" name="refuse" rows="2" placeholder="למשל: מחיר / לא רלוונטי / כבר יש פתרון…"></textarea>
+          <label for="refuse">אם לא / אולי — למה?</label>
+          <textarea id="refuse" name="refuse" rows="2"></textarea>
         </div>
         <button class="btn" type="submit">שלחו פרטים</button>
-        <p id="thanks" class="note" style="display:none;color:var(--accent);font-weight:700">תודה — נחזור אליכם לתיאום שיחה קצרה.</p>
+        <p id="thanks" class="note" style="display:none;color:var(--accent);font-weight:700">תודה — נחזור אליכם.</p>
       </form>
     </div>
 
-
     <div class="card">
       <h2 style="margin-top:0;font-size:1.15rem">שאלות קצרות</h2>
-      <p style="margin:0 0 8px"><strong>האפליקציה החינמית מושפעת?</strong><br>לא. השינוי בתמחור Service נוגע ל-WhatsApp Business API, לא לאפליקציית Business החינמית.</p>
-      <p style="margin:0"><strong>מה מקבלים ב-audit קולית?</strong><br>שיחה קצרה והמלצה אם קולית מתאימה — בלי הטמעת בוט או CRM מלא. ₪149–299.</p>
+      <p style="margin:0 0 8px"><strong>האפליקציה החינמית מושפעת?</strong><br>לא. השינוי נוגע ל-WhatsApp Business API בלבד.</p>
+      <p style="margin:0"><strong>מה מקבלים ב-audit קולית?</strong><br>שיחה קצרה והמלצה — בלי בוט/CRM מלא. ₪149–299.</p>
     </div>
 
-    <p class="honest">הדף הזה הוא כלי אומדן + אפשרות לצ׳קאפ. אנחנו לא מוכרים כאן בוט WhatsApp מלא או CRM. אפליקציות צ׳אט חינמיות שאינן על ה-API של Meta אינן רלוונטיות לחישוב הזה.</p>
+    <p class="honest">כלי אומדן + אפשרות לצ׳קאפ. לא מוכרים כאן בוט WhatsApp מלא או CRM.</p>
   </div>
   <script>
-    const RATE = 0.0053; // USD per Service message IL (quoted Meta; may change)
+    const RATE = 0.0053;
     const FREE = 1000;
-    const USDILS = 3.7; // [הנחה] display helper — labeled as rough
+    const USDILS = 3.7;
     const calcBtn = document.getElementById('calc');
     const result = document.getElementById('result');
     const wtp = document.getElementById('wtp');
@@ -119,8 +117,7 @@
       const ils = usd * USDILS;
       result.style.display = 'block';
       result.innerHTML = '<div>הודעות בתשלום משוערות: <strong>' + billable.toLocaleString('he-IL') + '</strong> (אחרי ' + freeTotal.toLocaleString('he-IL') + ' חינם)</div>' +
-        '<div style="margin-top:8px">אומדן חודשי: <strong>$' + usd.toFixed(2) + '</strong> <span style="color:#5b6573;font-size:.9rem">(≈ ₪' + ils.toFixed(0) + ' לפי שער גס — לבדיקה)</span></div>';
-      try { localStorage.setItem('wa_calc_uses', String((Number(localStorage.getItem('wa_calc_uses')||0)+1))); } catch(e) {}
+        '<div style="margin-top:8px">אומדן חודשי: <strong>$' + usd.toFixed(2) + '</strong> <span style="color:#5b6573;font-size:.9rem">(≈ ₪' + ils.toFixed(0) + ' שער גס)</span></div>';
     }
     calcBtn.addEventListener('click', runCalc);
     document.getElementById('lead').addEventListener('submit', function(e) {
@@ -131,17 +128,8 @@
         api: document.getElementById('api').value,
         wtp: document.getElementById('wtp').value,
         refuse: document.getElementById('refuse').value.trim(),
-        msgs: document.getElementById('msgs').value,
-        numbers: document.getElementById('numbers').value,
         at: new Date().toISOString()
       };
-      try {
-        const key = 'wa_calc_leads';
-        const arr = JSON.parse(localStorage.getItem(key) || '[]');
-        arr.push(data);
-        localStorage.setItem(key, JSON.stringify(arr));
-      } catch(err) {}
-      // mailto fallback for thin LP without backend
       const subject = encodeURIComponent('ליד מחשבון WA → קולית');
       const body = encodeURIComponent(Object.entries(data).map(([k,v]) => k + ': ' + v).join('\n'));
       window.location.href = 'mailto:gili@webxp.co.il?subject=' + subject + '&body=' + body;
