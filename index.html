@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>אומדן עלות WhatsApp Service — webxp</title>
+  <meta name="description" content="מחשבון אומדן לעלות הודעות WhatsApp Service בישראל לפי תעריפי Meta, לקראת השינוי ב-1.10.2026." />
+  <style>
+    :root { --bg:#f6f7f9; --card:#fff; --ink:#1c2430; --muted:#5b6573; --accent:#0b6e4f; --line:#e3e7ee; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Heebo, Arial, sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; }
+    .wrap { max-width:720px; margin:0 auto; padding:28px 18px 64px; }
+    h1 { font-size:clamp(1.5rem, 4vw, 2rem); line-height:1.25; margin:0 0 10px; }
+    .lead { color:var(--muted); margin:0 0 22px; font-size:1.05rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:16px; }
+    label { display:block; font-weight:700; font-size:.92rem; margin-bottom:6px; }
+    input, select, textarea { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:8px; font:inherit; background:#fff; }
+    .row { display:grid; gap:14px; margin-bottom:14px; }
+    @media(min-width:560px){ .row.two { grid-template-columns:1fr 1fr; } }
+    .btn { display:inline-block; background:var(--accent); color:#fff; border:0; border-radius:8px; padding:12px 18px; font-weight:700; cursor:pointer; font:inherit; }
+    .btn.secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); }
+    .result { display:none; margin-top:14px; padding:14px; background:#eef8f3; border-radius:8px; border:1px solid #cfe8dc; }
+    .result strong { font-size:1.35rem; }
+    .note { font-size:.85rem; color:var(--muted); margin-top:10px; }
+    .honest { font-size:.9rem; color:var(--muted); background:#fff8e8; border:1px solid #f0e0b4; border-radius:8px; padding:12px; }
+    a { color:var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="color:var(--muted);font-size:.9rem;margin:0 0 8px">webxp · כלי אומדן</p>
+    <h1>כמה עשויות לעלות הודעות WhatsApp Service אחרי 1.10.2026?</h1>
+    <p class="lead">מחשבון קצר לפי תעריפי Meta לישראל — כדי לתכנן מראש, לא כדי להלחיץ. בלי הרשמה חובה לחישוב.</p>
+    <p class="honest" style="margin-bottom:18px">אם אתם רק על <strong>אפליקציית WhatsApp Business החינמית</strong> — השינוי ב-1.10 <strong>לא נוגע אליכם</strong>. החישוב רלוונטי למי שעל <strong>WhatsApp Business API</strong> / בוטים.</p>
+
+    <div class="card">
+      <div class="row two">
+        <div>
+          <label for="numbers">כמה מספרי WhatsApp Business?</label>
+          <input id="numbers" type="number" min="1" value="1" />
+        </div>
+        <div>
+          <label for="msgs">הודעות Service משוערות בחודש</label>
+          <input id="msgs" type="number" min="0" value="2000" />
+        </div>
+      </div>
+      <button class="btn" type="button" id="calc">חשבו אומדן</button>
+      <div class="result" id="result" aria-live="polite"></div>
+      <p class="note">אומדן לפי תעריף Meta לשיחות Service בישראל (~$0.0053 להודעה) + 1,000 הודעות חינם לכל מספר בחודש. אפשר גם לחשוב במונחי כמה הודעות יוצאות בשיחה ממוצעת. התעריפים עשויים להשתנות — בדקו ב-Meta. לא רלוונטי לאפליקציית Business החינמית.</p>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;font-size:1.15rem">רוצים גם צ׳קאפ קולית?</h2>
+      <p style="color:var(--muted);margin-top:0">שיחת audit קצרה (₪149–299) — הבנה אם קולית מתאימה לעסק. <strong>בלי</strong> הטמעת בוט או CRM מלא.</p>
+      <form id="lead" class="row">
+        <div class="row two">
+          <div>
+            <label for="name">שם</label>
+            <input id="name" name="name" required autocomplete="name" />
+          </div>
+          <div>
+            <label for="phone">טלפון</label>
+            <input id="phone" name="phone" required autocomplete="tel" />
+          </div>
+        </div>
+        <div>
+          <label for="api">העסק על WhatsApp API / בוט היום?</label>
+          <select id="api" name="api" required>
+            <option value="">בחרו</option>
+            <option>כן</option>
+            <option>לא</option>
+            <option>לא בטוח</option>
+          </select>
+        </div>
+        <div>
+          <label for="wtp">מעוניינים ב-audit קולית בתשלום?</label>
+          <select id="wtp" name="wtp" required>
+            <option value="">בחרו</option>
+            <option value="yes">כן</option>
+            <option value="maybe">אולי</option>
+            <option value="no">לא</option>
+          </select>
+        </div>
+        <div id="refuse-wrap" style="display:none">
+          <label for="refuse">אם לא / אולי — למה? (עוזר לנו ללמוד)</label>
+          <textarea id="refuse" name="refuse" rows="2" placeholder="למשל: מחיר / לא רלוונטי / כבר יש פתרון…"></textarea>
+        </div>
+        <button class="btn" type="submit">שלחו פרטים</button>
+        <p id="thanks" class="note" style="display:none;color:var(--accent);font-weight:700">תודה — נחזור אליכם לתיאום שיחה קצרה.</p>
+      </form>
+    </div>
+
+
+    <div class="card">
+      <h2 style="margin-top:0;font-size:1.15rem">שאלות קצרות</h2>
+      <p style="margin:0 0 8px"><strong>האפליקציה החינמית מושפעת?</strong><br>לא. השינוי בתמחור Service נוגע ל-WhatsApp Business API, לא לאפליקציית Business החינמית.</p>
+      <p style="margin:0"><strong>מה מקבלים ב-audit קולית?</strong><br>שיחה קצרה והמלצה אם קולית מתאימה — בלי הטמעת בוט או CRM מלא. ₪149–299.</p>
+    </div>
+
+    <p class="honest">הדף הזה הוא כלי אומדן + אפשרות לצ׳קאפ. אנחנו לא מוכרים כאן בוט WhatsApp מלא או CRM. אפליקציות צ׳אט חינמיות שאינן על ה-API של Meta אינן רלוונטיות לחישוב הזה.</p>
+  </div>
+  <script>
+    const RATE = 0.0053; // USD per Service message IL (quoted Meta; may change)
+    const FREE = 1000;
+    const USDILS = 3.7; // [הנחה] display helper — labeled as rough
+    const calcBtn = document.getElementById('calc');
+    const result = document.getElementById('result');
+    const wtp = document.getElementById('wtp');
+    const refuseWrap = document.getElementById('refuse-wrap');
+    wtp.addEventListener('change', () => {
+      refuseWrap.style.display = (wtp.value === 'no' || wtp.value === 'maybe') ? 'block' : 'none';
+    });
+    function runCalc() {
+      const nums = Math.max(1, Number(document.getElementById('numbers').value) || 1);
+      const msgs = Math.max(0, Number(document.getElementById('msgs').value) || 0);
+      const freeTotal = FREE * nums;
+      const billable = Math.max(0, msgs - freeTotal);
+      const usd = billable * RATE;
+      const ils = usd * USDILS;
+      result.style.display = 'block';
+      result.innerHTML = '<div>הודעות בתשלום משוערות: <strong>' + billable.toLocaleString('he-IL') + '</strong> (אחרי ' + freeTotal.toLocaleString('he-IL') + ' חינם)</div>' +
+        '<div style="margin-top:8px">אומדן חודשי: <strong>$' + usd.toFixed(2) + '</strong> <span style="color:#5b6573;font-size:.9rem">(≈ ₪' + ils.toFixed(0) + ' לפי שער גס — לבדיקה)</span></div>';
+      try { localStorage.setItem('wa_calc_uses', String((Number(localStorage.getItem('wa_calc_uses')||0)+1))); } catch(e) {}
+    }
+    calcBtn.addEventListener('click', runCalc);
+    document.getElementById('lead').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        api: document.getElementById('api').value,
+        wtp: document.getElementById('wtp').value,
+        refuse: document.getElementById('refuse').value.trim(),
+        msgs: document.getElementById('msgs').value,
+        numbers: document.getElementById('numbers').value,
+        at: new Date().toISOString()
+      };
+      try {
+        const key = 'wa_calc_leads';
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        arr.push(data);
+        localStorage.setItem(key, JSON.stringify(arr));
+      } catch(err) {}
+      // mailto fallback for thin LP without backend
+      const subject = encodeURIComponent('ליד מחשבון WA → קולית');
+      const body = encodeURIComponent(Object.entries(data).map(([k,v]) => k + ': ' + v).join('\n'));
+      window.location.href = 'mailto:gili@webxp.co.il?subject=' + subject + '&body=' + body;
+      document.getElementById('thanks').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
